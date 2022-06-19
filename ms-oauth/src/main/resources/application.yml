@@ -1,0 +1,11 @@
+server:
+  port: 8443
+
+spring:
+  application:
+    name: fn-oauth
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

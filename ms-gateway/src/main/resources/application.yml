@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: ms-gateway
+server:
+  port: 8765
