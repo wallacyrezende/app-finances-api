@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Project configs ###
+C:\Dev\finance-app\ms-config-server\src\main\resources\application-dev.yml
