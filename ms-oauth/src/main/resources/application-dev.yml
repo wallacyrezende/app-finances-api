@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: fn-oauth
+  config:
+    import: optional:configserver:http://localhost:8888/
+    cloud:
+      config:
+        profile: dev
 
 eureka:
   client:

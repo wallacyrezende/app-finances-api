@@ -7,17 +7,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
-@RefreshScope //refresh in time execution
 @Configuration
 public class AppConfig {
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    private final RemoteSecurityConfig remoteSecurityConfig;
+    public AppConfig(RemoteSecurityConfig remoteSecurityConfig) {
+        this.remoteSecurityConfig = remoteSecurityConfig;
+    }
 
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
         JwtAccessTokenConverter tokenConverter = new JwtAccessTokenConverter();
-        tokenConverter.setSigningKey(jwtSecret);
+        tokenConverter.setSigningKey(remoteSecurityConfig.getTokenSigningKey());
         return tokenConverter;
     }
 

@@ -10,9 +10,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.dev.finance</groupId>
-	<artifactId>finances</artifactId>
+	<artifactId>finance</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>finances</name>
+	<name>finance</name>
 	<description>Projeto para gerenciamento de finanças</description>
 
 	<properties>

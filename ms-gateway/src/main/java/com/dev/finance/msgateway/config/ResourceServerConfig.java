@@ -1,7 +1,5 @@
 package com.dev.finance.msgateway.config;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +19,6 @@ import java.util.Arrays;
 
 @Configuration
 @EnableResourceServer
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     private final JwtTokenStore tokenStore;
@@ -32,17 +29,20 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     private static final String[] ADMIN = {"/actuator/**", "/oauth/actuator/**"};
 
+    public ResourceServerConfig(JwtTokenStore tokenStore) {
+        this.tokenStore = tokenStore;
+    }
+
     @Override
-    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+    public void configure(ResourceServerSecurityConfigurer resources) {
         resources.tokenStore(tokenStore);
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
+        http.authorizeRequests()
                 .antMatchers(PUBLIC).permitAll()
-                .antMatchers(HttpMethod.GET, USER).hasAnyRole("USER", "ADMIN")
+                .antMatchers(USER).hasAnyRole("USER", "ADMIN")
                 .antMatchers(ADMIN).hasRole("ADMIN")
                 .anyRequest().authenticated();
 

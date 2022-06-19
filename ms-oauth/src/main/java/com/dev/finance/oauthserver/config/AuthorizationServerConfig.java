@@ -1,8 +1,6 @@
 package com.dev.finance.oauthserver.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,48 +13,42 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 @Configuration
-@RefreshScope
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    @Value("${oauth.client.name}")
-    private String clientName;
-
-    @Value("${oauth.client.secret}")
-    private String clientSecret;
-
+    private final RemoteSecurityConfig remoteSecurityConfig;
     private final JwtAccessTokenConverter tokenConverter;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenStore tokenStore;
     private final AuthenticationManager authenticationManager;
 
-    public AuthorizationServerConfig(
-            @Qualifier("accessTokenConverter") JwtAccessTokenConverter tokenConverter, BCryptPasswordEncoder passwordEncoder, JwtTokenStore tokenStore,
-            AuthenticationManager authenticationManager) {
+    public AuthorizationServerConfig(@Qualifier("accessTokenConverter") JwtAccessTokenConverter tokenConverter, BCryptPasswordEncoder passwordEncoder, JwtTokenStore tokenStore, AuthenticationManager authenticationManager, RemoteSecurityConfig remoteSecurityConfig) {
         this.tokenConverter = tokenConverter;
         this.passwordEncoder = passwordEncoder;
         this.tokenStore = tokenStore;
         this.authenticationManager = authenticationManager;
+        this.remoteSecurityConfig = remoteSecurityConfig;
     }
 
     @Override
-    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        security.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
+    public void configure(AuthorizationServerSecurityConfigurer security){
+        security.tokenKeyAccess("permitAll()");
     }
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
-                .withClient(clientName)
-                .secret(passwordEncoder.encode(clientSecret))
+                .withClient(remoteSecurityConfig.getClientId())
+                .secret(passwordEncoder.encode(remoteSecurityConfig.getClientSecret()))
                 .scopes("read", "write")
                 .authorizedGrantTypes("password")
-                .accessTokenValiditySeconds(86400);
+                .accessTokenValiditySeconds(remoteSecurityConfig.getTokenExpiration());
     }
 
     @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.authenticationManager(authenticationManager)
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints){
+        endpoints
+                .authenticationManager(authenticationManager)
                 .tokenStore(tokenStore)
                 .accessTokenConverter(tokenConverter);
     }
