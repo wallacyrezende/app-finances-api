@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    config:
+      profile: dev
+  config:
+    import: optional:configserver:http://localhost:8888/
+
+server:
+  port: 8765
+
+#Eureka configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+zuul:
+  routes:
+    user-release:
+      service-id: user-release
+      path: /user-release/**
+    oauth:
+      service-id: auth-server
+      path: /auth-server/**
+  sensitiveHeaders: Cookie,Set-Cookie
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000
+ribbon:
+  ConnectTimeout: 10000
+  ReadTimeout: 20000
