@@ -18,19 +18,3 @@ eureka:
     client:
       service-url:
         defaultZone: http://localhost:8761/eureka
-
-#spring:
-#  datasource:
-#    url: jdbc:postgresql://ec2-54-164-22-242.compute-1.amazonaws.com:5432/d76585n95v50hh
-#    username: yojudkjqfdhvfs
-#    password: 02a6bb34fdc4df05c94032360052b4a382d51f14228118e6fe83375f1f42bc7a
-#    driver-class-name: org.postgresql.Driver
-#
-#  devtools:
-#    add-properties: true
-#
-#  jpa:
-#    properties:
-#      hibernate:
-#        format_sql: false
-#        show_sql: false
