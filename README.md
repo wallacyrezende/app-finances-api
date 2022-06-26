@@ -10,6 +10,9 @@
 - User Release Service
 - Docker
 
+#Credenciais padrão do site 
+user: teste@teste.com
+pass: teste
 
 # Executando a aplicação
 
