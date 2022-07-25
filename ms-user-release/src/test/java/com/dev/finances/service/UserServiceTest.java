@@ -2,9 +2,12 @@ package com.dev.finances.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
 
 import com.dev.finances.api.dto.UserAuthenticated;
+import com.dev.finances.model.entity.Role;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,14 +32,18 @@ public class UserServiceTest {
 	
 	@MockBean
 	UserRepository repository;
+	
+	public static final String NAME = "name";
+	public static final String EMAIL = "email@email.com";
+	public static final String PASSWORD = "password";
 
 	@Test
 	public void deveSalvarUmUsuario() {
 		Mockito.doNothing().when(service).validateEmail(Mockito.anyString());
 		User user = User.builder()
 								 .id(1l)
-								 .name("nome")
-								 .email("email@email.com")
+								 .name(NAME)
+								 .email(EMAIL)
 								 .password("senha")
 								 .build();
 		
@@ -48,16 +55,15 @@ public class UserServiceTest {
 			Assertions.assertEquals(userSalvo != null, userSalvo != null);
 			Assertions.assertEquals(1l, userSalvo.getId());
 			Assertions.assertEquals("nome", userSalvo.getName());
-			Assertions.assertEquals("email@email.com", userSalvo.getEmail());
+			Assertions.assertEquals(EMAIL, userSalvo.getEmail());
 			Assertions.assertEquals("senha", userSalvo.getPassword());
 		});		
 	}
 	
 	@Test
 	public void naoDeveSalvarUmUsuarioComEmailJaCadastrado() {
-		String email = "email@email.com";
-		User user = User.builder().email(email).build();
-		Mockito.doThrow(BusinessException.class).when(service).validateEmail(email);
+		User user = User.builder().email(EMAIL).build();
+		Mockito.doThrow(BusinessException.class).when(service).validateEmail(EMAIL);
 		
 		
 		
@@ -71,16 +77,13 @@ public class UserServiceTest {
 	@Test
 	public void deveAutenticarUmUsuarioComSucesso() {
 //		cenario
-		String email = "email@email.com";
-		String password = "senha";
-		
-		User user = User.builder().email(email).password(password).id(1l).build();
-		Mockito.when(repository.findByEmail(email)).thenReturn(Optional.of(user));
+		User user = User.builder().email(EMAIL).password(PASSWORD).id(1l).build();
+		Mockito.when(repository.findByEmail(EMAIL)).thenReturn(Optional.of(user));
 		
 
 		Assertions.assertDoesNotThrow(() -> {
 //			acao
-			UserAuthenticated result = service.auth(email, password);
+			UserAuthenticated result = service.auth(EMAIL, PASSWORD);
 		
 //			verificacao
 			Assertions.assertNotNull(result);
@@ -92,13 +95,13 @@ public class UserServiceTest {
 		Mockito.when(repository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
 		
 		Exception exception = Assertions.assertThrows(AuthenticationException.class, () -> {
-			service.auth("email@email.com", "senha");
+			service.auth(EMAIL, "senha");
 		});
 		
 		assertEquals("Usuário não encontrado para o e-mail informado.", exception.getMessage());
 		
 //		verificacao junit 4
-//		Throwblw exception = Assertions.assertCatchThrowable( () -> service.autenticar("email@email.com", "senha"));
+//		Throwblw exception = Assertions.assertCatchThrowable( () -> service.autenticar(EMAIL, "senha"));
 //		Assertions.assertThat(exception).isInstanceOf(ErroAutenticacao.class).hasMessage("Usuário não encontrado para o e-mail informado.");
 	}
 	
@@ -106,13 +109,13 @@ public class UserServiceTest {
 	public void deveLancarErroQuandoSenhaNaoCorresponder() {
 		String password = "senha";
 		User user = User.builder()
-								 .email("email@email.com")
+								 .email(EMAIL)
 								 .password(password)
 								 .build();
 		Mockito.when(repository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(user));
 		
 	    Exception exception = Assertions.assertThrows(AuthenticationException.class, () -> {
-			service.auth("email@email.com", "123");
+			service.auth(EMAIL, "123");
 		});
 	    
 	 	assertEquals("Senha inválida.", exception.getMessage());
@@ -124,14 +127,22 @@ public class UserServiceTest {
 		Mockito.when(repository.existsByEmail(Mockito.anyString())).thenReturn(false);
 		
 //		ação
-		Assertions.assertDoesNotThrow(() -> service.validateEmail("email@email.com"));
+		Assertions.assertDoesNotThrow(() -> service.validateEmail(EMAIL));
 	}
 	
 	@Test
 	public void deveLancarErroAoValidarEmailQuandoExistirEmailCadastrado() {
 		Mockito.when(repository.existsByEmail(Mockito.anyString())).thenReturn(true);
 		
-		Assertions.assertThrows(BusinessException.class, () -> service.validateEmail("email@email.com"));
+		Assertions.assertThrows(BusinessException.class, () -> service.validateEmail(EMAIL));
+	}
+
+	public static User createUser() {
+		return User.builder().id(1l)
+				.name(NAME)
+				.email(EMAIL)
+				.password(PASSWORD)
+				.build();
 	}
 
 }

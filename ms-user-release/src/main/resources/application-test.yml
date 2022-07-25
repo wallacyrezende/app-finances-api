@@ -1,0 +1,15 @@
+server:
+    port: 8081
+spring:
+  application:
+    name: user-release
+  datasource:
+    url: jdbc:h2:mem:user-release-db
+    username: sa
+    password:
+
+  cloud:
+    discovery:
+      enabled: false
+    config:
+      enabled: false

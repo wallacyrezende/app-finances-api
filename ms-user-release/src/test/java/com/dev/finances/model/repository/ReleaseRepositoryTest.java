@@ -2,8 +2,10 @@ package com.dev.finances.model.repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Optional;
 
+import static com.dev.finances.service.UserServiceTest.createUser;
 import static org.assertj.core.api.Assertions.*;
 
 import com.dev.finances.repository.ReleaseRepository;
@@ -35,7 +37,7 @@ public class ReleaseRepositoryTest {
 
 	@Test
 	public void deveSalvarUmLancamento() {
-		Release lancamento = criarLancamento();
+		Release lancamento = createRelease();
 		lancamento = repository.save(lancamento);
 
 		assertThat(lancamento.getId()).isNotNull();
@@ -79,20 +81,20 @@ public class ReleaseRepositoryTest {
 	}
 
 	private Release criarEPersistirLancamento() {
-		Release lancamento = criarLancamento();
+		Release lancamento = createRelease();
 		entityManager.persist(lancamento);
 		return lancamento;
 	}
 
-	public static Release criarLancamento() {
+	public static Release createRelease() {
 		return Release.builder()
-				.ano(2019)
-				.mes(1)
-				.description("lancamento qualquer")
+				.releaseDate(new Date())
+				.description("any release")
+				.user(createUser())
 				.value(BigDecimal.valueOf(10))
 				.type(ReleaseTypeEnum.RECEITA)
 				.status(ReleaseStatusEnum.PENDENTE)
-				.createAt(LocalDate.now())
+				.createAt(LocalDate.of(2022, 01, 01))
 				.build();
 	}
 }

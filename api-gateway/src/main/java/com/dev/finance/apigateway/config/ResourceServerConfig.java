@@ -26,7 +26,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     private static final String[] USER = {"/user-release/**"};
 
-    private static final String[] ADMIN = {"/actuator/**"};
+    private static final String[] ADMIN = {"/actuator/refresh"};
 
     public ResourceServerConfig(JwtTokenStore tokenStore) {
         this.tokenStore = tokenStore;

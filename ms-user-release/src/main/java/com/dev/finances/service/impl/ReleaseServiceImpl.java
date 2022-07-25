@@ -32,11 +32,15 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ReleaseServiceImpl implements ReleaseService {
 
     private final ReleaseRepository repository;
-    private final @NonNull UserService userService;
+    private final UserService userService;
+
+    public ReleaseServiceImpl(UserService userService, ReleaseRepository releaseRepository) {
+        this.userService = userService;
+        this.repository = releaseRepository;
+    }
 
     @Override
     @Transactional

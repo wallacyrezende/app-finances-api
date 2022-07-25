@@ -1,6 +1,12 @@
+server:
+    port: 8080
+
 spring:
   application:
     name: user-release
+  cloud:
+      config:
+        uri: http://localhost:8888
   devtools:
     add-properties: true
   jpa:
@@ -8,9 +14,6 @@ spring:
       hibernate:
         format_sql: false
         show_sql: false
-
-server:
-    port: 8080
 
 eureka:
     instance:
