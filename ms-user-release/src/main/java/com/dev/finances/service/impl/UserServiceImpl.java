@@ -15,10 +15,9 @@ import com.dev.finances.service.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 	
-	private UserRepository repository;
+	private final UserRepository repository;
 	
 	public UserServiceImpl(UserRepository repository) {
-		super();
 		this.repository = repository;
 	}
 

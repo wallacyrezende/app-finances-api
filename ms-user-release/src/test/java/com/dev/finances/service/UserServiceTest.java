@@ -138,7 +138,7 @@ public class UserServiceTest {
 	}
 
 	public static User createUser() {
-		return User.builder().id(1l)
+		return User.builder().id(1L)
 				.name(NAME)
 				.email(EMAIL)
 				.password(PASSWORD)

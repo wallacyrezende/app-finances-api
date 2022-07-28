@@ -27,6 +27,11 @@ import java.util.Optional;
 
 import static com.dev.finances.model.repository.ReleaseRepositoryTest.createRelease;
 import static com.dev.finances.service.UserServiceTest.createUser;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Release service tests")
 @SpringBootTest
@@ -60,18 +65,16 @@ public class ReleaseServiceImplTest {
 		User user = createUser();
 
 		Release releaseCreated = createRelease();
-		releaseCreated.setId(1l);
 		releaseCreated.setStatus(ReleaseStatusEnum.PENDENTE);
 		releaseCreated.setCreateAt(LocalDate.of(2022, 01, 01));
 		Mockito.when(releaseRepository.save(releaseToSave)).thenReturn(releaseCreated);
 
 		Release release = releaseService.save(releaseToSave);
 
-		Assertions.assertNotNull(release);
-		Assertions.assertEquals(release.getId(), 1l);
-		Assertions.assertEquals(release.getStatus(), ReleaseStatusEnum.PENDENTE);
-		Assertions.assertEquals(release.getCreateAt(), LocalDate.of(2022, 01, 01));
-		Assertions.assertEquals(release.getUser(), user);
+		assertNotNull(release);
+		assertEquals(release.getStatus(), ReleaseStatusEnum.PENDENTE);
+		assertEquals(release.getCreateAt(), LocalDate.of(2022, 01, 01));
+		assertEquals(release.getUser(), user);
 	}
 
 	@Test
@@ -79,7 +82,7 @@ public class ReleaseServiceImplTest {
 	public void mustNotCreateAReleaseWhenIsAnErrorInTheValidation() {
 		Release release = createRelease();
 		release.setUser(null);
-		Assertions.assertThrows(BusinessException.class, () -> releaseService.save(release));
+		assertThrows(BusinessException.class, () -> releaseService.save(release));
 		Mockito.verify(releaseRepository, Mockito.never()).save(release);
 	}
 
@@ -87,7 +90,7 @@ public class ReleaseServiceImplTest {
 	@DisplayName("MUST UPDATE a release")
 	public void mustUpdateARelease() {
 		Release releaseUpdated = createRelease();
-		releaseUpdated.setId(1l);
+		releaseUpdated.setId(1L);
 
 		Mockito.when(releaseRepository.save(Mockito.any( Release.class ))).thenReturn(releaseUpdated);
 
@@ -101,7 +104,7 @@ public class ReleaseServiceImplTest {
 	public void mustThrowErrorTryingToUpdateAReleaseThatHasNotYetSaved() {
 		Release release = createRelease();
 
-		Assertions.assertThrows(NullPointerException.class, () -> releaseService.update(release));
+		assertThrows(NullPointerException.class, () -> releaseService.update(release));
 
 		Mockito.verify(releaseRepository, Mockito.never()).save(release);
 	}
@@ -110,7 +113,7 @@ public class ReleaseServiceImplTest {
 	@DisplayName("MUST DELETE a release")
 	public void mustDeleteARelease() {
 		Release release = createRelease();
-		release.setId(1l);
+		release.setId(1L);
 
 		releaseService.delete(release);
 
@@ -122,7 +125,7 @@ public class ReleaseServiceImplTest {
 	public void mustThrowErrorTryingToDeleteAReleaseThatHasNotYetSaved() {
 		Release release = createRelease();
 
-		Assertions.assertThrows(NullPointerException.class, () -> releaseService.delete(release));
+		assertThrows(NullPointerException.class, () -> releaseService.delete(release));
 
 		Mockito.verify(releaseRepository, Mockito.never()).delete(release);
 	}
@@ -131,23 +134,23 @@ public class ReleaseServiceImplTest {
 	@DisplayName("MUST FILTER releases")
 	public void mustFilterReleases() {
 		Release release = createRelease();
-		release.setId(1l);
+		release.setId(1L);
 
 		List<Release> list = Arrays.asList(release);
 		Mockito.when( releaseRepository.findAll(Mockito.any( Example.class ))).thenReturn(list);
 
 		List<Release> result = releaseService.find(release);
 
-		Assertions.assertFalse(result.isEmpty());
-		Assertions.assertFalse(result.size() > 1);
-		Assertions.assertTrue(result.contains(release));
+		assertFalse(result.isEmpty());
+		assertFalse(result.size() > 1);
+		assertTrue(result.contains(release));
 	}
 
 	@Test
 	@DisplayName("MUST UPDATE STATUS of the release")
 	public void mustUpdateStatusOfTheRelease() {
 		Release release = createRelease();
-		release.setId(1l);
+		release.setId(1L);
 		release.setStatus(ReleaseStatusEnum.PENDENTE);
 
 		ReleaseStatusEnum newStatus = ReleaseStatusEnum.EFETIVADO;
@@ -155,14 +158,14 @@ public class ReleaseServiceImplTest {
 
 		releaseService.updateStatus(release, newStatus);
 
-		Assertions.assertEquals(release.getStatus(), newStatus);
+		assertEquals(release.getStatus(), newStatus);
 		Mockito.verify(releaseRepository).save(release);
 	}
 
 	@Test
 	@DisplayName("MUST GET release by ID")
 	public void mustGetReleaseByID() {
-		Long id = 1l;
+		Long id = 1L;
 		Release release = createRelease();
 		release.setId(id);
 
@@ -170,13 +173,13 @@ public class ReleaseServiceImplTest {
 
 		Optional<Release> releaseFound = releaseService.findById(id);
 
-		Assertions.assertTrue(releaseFound.isPresent());
+		assertTrue(releaseFound.isPresent());
 	}
 
 	@Test
 	@DisplayName("MUST return EMPTY when is not exists release")
 	public void mustReturnEmptyWhenIsNotExistsRelease() {
-		Long id = 1l;
+		Long id = 1L;
 		Release release = createRelease();
 		release.setId(id);
 
@@ -184,7 +187,7 @@ public class ReleaseServiceImplTest {
 
 		Optional<Release> releaseFound = releaseService.findById(id);
 
-		Assertions.assertFalse(releaseFound.isPresent());
+		assertFalse(releaseFound.isPresent());
 	}
 
 	@Test
@@ -192,23 +195,23 @@ public class ReleaseServiceImplTest {
 	public void mustThrowErrorsWhenValidatingARelease() {
 		Release  release =  new Release();
 
-		BusinessException error = Assertions.assertThrows( BusinessException.class, () -> releaseService.validate(release) );
-		Assertions.assertEquals(error.getMessage(), ENTER_A_VALID_DESCRIPTION);
+		BusinessException error = assertThrows( BusinessException.class, () -> releaseService.validate(release) );
+		assertEquals(error.getMessage(), ENTER_A_VALID_DESCRIPTION);
 
 		release.setDescription("Salário");
-		error = Assertions.assertThrows( BusinessException.class, () -> releaseService.validate(release) );
-		Assertions.assertEquals(error.getMessage(), ENTER_A_VALID_USER);
+		error = assertThrows( BusinessException.class, () -> releaseService.validate(release) );
+		assertEquals(error.getMessage(), ENTER_A_VALID_USER);
 
 		release.setUser(createUser());
-		error = Assertions.assertThrows( BusinessException.class, () -> releaseService.validate(release) );
-		Assertions.assertEquals(error.getMessage(), ENTER_A_VALID_VALUE);
+		error = assertThrows( BusinessException.class, () -> releaseService.validate(release) );
+		assertEquals(error.getMessage(), ENTER_A_VALID_VALUE);
 
 		release.setValue(BigDecimal.ONE);
-		error = Assertions.assertThrows( BusinessException.class, () -> releaseService.validate(release) );
-		Assertions.assertEquals(error.getMessage(), ENTER_A_TYPE_RELEASE);
+		error = assertThrows( BusinessException.class, () -> releaseService.validate(release) );
+		assertEquals(error.getMessage(), ENTER_A_TYPE_RELEASE);
 
 		release.setType(ReleaseTypeEnum.RECEITA);
-		error = Assertions.assertThrows( BusinessException.class, () -> releaseService.validate(release) );
-		Assertions.assertEquals(error.getMessage(), ENTER_A_RELEASE_DATE);
+		error = assertThrows( BusinessException.class, () -> releaseService.validate(release) );
+		assertEquals(error.getMessage(), ENTER_A_RELEASE_DATE);
 	}
 }
