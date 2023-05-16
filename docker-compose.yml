@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+
+# INFRASTRUCTURE
+
+  service-discovery:
+    image: wallacyrezende/service-discovery:1.0-test
+    ports:
+      - '8761:8761'
+    restart: on-failure:10
+
+  ms-user-release:
+    image: wallacyrezende/ms-user-release:1.0-test
+    ports:
+      - '8080:8080'
+    restart: on-failure:10
+
+  config-server:
+    image: wallacyrezende/config-server:1.0-test
+    ports:
+      - '8888:8888'
+    restart: on-failure:10
+
+  auth-server:
+    image: wallacyrezende/auth-server:1.0-test
+    ports:
+      - '8443:8443'
+    restart: on-failure:10
+
+  api-gateway:
+    image: wallacyrezende/api-gateway:1.0-test
+    ports:
+      - '8765:8765'
+    restart: on-failure:10
