@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    config:
+      enabled: false
+  profiles:
+    active: test
+
+security-config:
+  tokenSigningKey: test
