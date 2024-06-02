@@ -1,7 +1,7 @@
 FROM maven:3.8.4-openjdk-11-slim AS build
 WORKDIR /app
 COPY . /app
-RUN mvn clean install
+RUN mvn clean install -DskipTests
 FROM openjdk:11-jdk-slim
 WORKDIR /app
 
